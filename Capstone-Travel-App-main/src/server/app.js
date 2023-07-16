@@ -3,9 +3,8 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 const bodyParser = require("body-parser");
-// const fetch = require("node-fetch");
+const fetch = require("node-fetch");
 
-const fetch = import("node-fetch");
 
 const dotenv = require("dotenv");
 // const { Console } = require('console');

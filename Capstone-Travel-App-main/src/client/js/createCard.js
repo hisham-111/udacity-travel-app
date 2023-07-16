@@ -1,61 +1,77 @@
 import {
-    daysAwayText, calcDaysAway, minDate, newID,
-    storage, loadCardData, checkListener, tripList,
-    moreTrips, pullData, getDate
-} from './app'
+  daysAwayText,
+  calcDaysAway,
+  minDate,
+  newID,
+  storage,
+  loadCardData,
+  checkListener,
+  tripList,
+  moreTrips,
+  pullData,
+  getDate,
+} from "./app";
 
 // creates a new location to store data in the main array
 // returns and 1st array for the city added
 function newStorageItem(mainStorageArray, cityName, tripDate) {
-    // get new storage position
-    let x = mainStorageArray.length;
-    mainStorageArray[x] = {
-        "id": newID(cityName), "data": {
-            "cities": [
-                {
-                    "name": cityName.toLowerCase(),
-                    "date": tripDate,
-                    "imageCitySearched": "",
-                    "weather": [{ "icon": "", "high": "", "low": "", "desc": "" }],
-                    "flight": {
-                        "depart": { "code": "", "time": "", "info": "" },
-                        "arrive": { "code": "", "time": "", "info": "" }
-                    },
-                    "hotel": { "name": "", "address": "" }
-                },
-                {
-                    "name": "next location",
-                    "date": "",
-                    "imageCitySearched": "",
-                    "weather": [{ "icon": "new.svg", "high": "", "low": "", "desc": "???" }],
-                    "flight": {
-                        "depart": { "code": "", "time": "", "info": "" },
-                        "arrive": { "code": "", "time": "", "info": "" }
-                    },
-                    "hotel": { "name": "", "address": "" }
-                },
-                {
-                    "name": "final location",
-                    "date": "",
-                    "imageCitySearched": "",
-                    "weather": [{ "icon": "new.svg", "high": "", "low": "", "desc": "???" }],
-                    "flight": {
-                        "depart": { "code": "", "time": "", "info": "" },
-                        "arrive": { "code": "", "time": "", "info": "" }
-                    },
-                    "hotel": { "name": "", "address": "" }
-                }
-            ]
-        }
-    };
-    return mainStorageArray[x]
+  // get new storage position
+  let x = mainStorageArray.length;
+  mainStorageArray[x] = {
+    id: newID(cityName),
+    data: {
+      cities: [
+        {
+          name: cityName.toLowerCase(),
+          date: tripDate,
+          imageCitySearched: "",
+          weather: [{ icon: "", high: "", low: "", desc: "" }],
+          flight: {
+            depart: { code: "", time: "", info: "" },
+            arrive: { code: "", time: "", info: "" },
+          },
+          hotel: { name: "", address: "" },
+        },
+        {
+          name: "next location",
+          date: "",
+          imageCitySearched: "",
+          weather: [{ icon: "new.svg", high: "", low: "", desc: "???" }],
+          flight: {
+            depart: { code: "", time: "", info: "" },
+            arrive: { code: "", time: "", info: "" },
+          },
+          hotel: { name: "", address: "" },
+        },
+        {
+          name: "final location",
+          date: "",
+          imageCitySearched: "",
+          weather: [{ icon: "new.svg", high: "", low: "", desc: "???" }],
+          flight: {
+            depart: { code: "", time: "", info: "" },
+            arrive: { code: "", time: "", info: "" },
+          },
+          hotel: { name: "", address: "" },
+        },
+      ],
+    },
+  };
+  return mainStorageArray[x];
 }
 
 function createCard(tripArray) {
-    let unknown = "";
-    let daysAway = daysAwayText(tripArray.data.cities[0].name, calcDaysAway(tripArray.data.cities[0].date));
-    if (tripArray.data.cities[1].name === "next location" || tripArray.data.cities[1].name.length < 3) unknown = "unknown";
-    const template = `
+  let unknown = "";
+  let daysAway = daysAwayText(
+    tripArray.data.cities[0].name,
+    calcDaysAway(tripArray.data.cities[0].date)
+  );
+  if (
+    tripArray.data.cities[1].name === "next location" ||
+    tripArray.data.cities[1].name.length < 3
+  )
+    unknown = "unknown";
+  const template = `
     <div class="archivable" onclick="return Client.archiveCard(event)">Click here to archive/unarchive this
                 trip!
             </div>
@@ -136,31 +152,29 @@ function createCard(tripArray) {
                                                             </div>
                                                         </div>
                                                         <span class="delete-trip"></span><span class="edit-trip"></span>
-   `
-    const sectionCard = document.createElement('section');
-    sectionCard.classList.add('card');
-    if (tripArray.archived) sectionCard.classList.add('archived');
-    sectionCard.setAttribute("data-id", tripArray.id);
-    sectionCard.innerHTML = template;
-    const newLocations = sectionCard.querySelector('.locations');
-    newLocations.addEventListener('mousedown', e => checkListener(e));
-    document.body.style.cursor = "waiting";
-    return sectionCard;
+   `;
+  const sectionCard = document.createElement("section");
+  sectionCard.classList.add("card");
+  if (tripArray.archived) sectionCard.classList.add("archived");
+  sectionCard.setAttribute("data-id", tripArray.id);
+  sectionCard.innerHTML = template;
+  const newLocations = sectionCard.querySelector(".locations");
+  newLocations.addEventListener("mousedown", (e) => checkListener(e));
+  document.body.style.cursor = "waiting";
+  return sectionCard;
 }
 
 // upon loading of page, the data from local storage will be used to add back active cards
 function repopulatePage(mainStorageArray) {
-    for (let i = 0; i < mainStorageArray.length; i++) {
-        let storedCard = createCard(mainStorageArray[i]);
-        tripList.insertBefore(storedCard, moreTrips);
-        storedCard.focus();
-        pullData(mainStorageArray[i].data.cities[0].name, storedCard);
-        // updatePackingLists();
-    }
-    document.body.style.cursor = "auto";
-    document.body.scrollTo(0, 0);
-
+  for (let i = 0; i < mainStorageArray.length; i++) {
+    let storedCard = createCard(mainStorageArray[i]);
+    tripList.insertBefore(storedCard, moreTrips);
+    storedCard.focus();
+    pullData(mainStorageArray[i].data.cities[0].name, storedCard);
+    // updatePackingLists();
+  }
+  document.body.style.cursor = "auto";
+  document.body.scrollTo(0, 0);
 }
 
-
-export { newStorageItem, createCard, repopulatePage }
+export { newStorageItem, createCard, repopulatePage };
